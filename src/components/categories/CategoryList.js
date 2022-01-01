@@ -1,13 +1,29 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+import * as categoryActions from "../../redux/actions/categoryActions"
+import {getCategories} from "../../redux/actions/categoryActions";
+import {ListGroup, ListGroupItem} from "reactstrap";
 
 class CategoryList extends Component {
+
+    componentDidMount() {
+        this.props.actions.getCategories()
+    }
+
     render() {
         return (
             <div>
-                <h1> Category List </h1>
-                <h6> {this.props.currentCategory.name} </h6>
-                <h5> {this.props.currentCategory.name} </h5>
+                <h1> Category List {this.props.categories.length } </h1>
+                <ListGroup>
+                    {
+                        this.props.categories.map(category => (
+                            <ListGroupItem>
+                                { category.categoryName }
+                            </ListGroupItem>
+                        ))
+                    }
+                </ListGroup>
             </div>
         );
     }
@@ -15,8 +31,17 @@ class CategoryList extends Component {
 
 function mapStateToProps(state) {
     return {
-        currentCategory: state.changeCategoryReducer
+        currentCategory: state.changeCategoryReducer,
+        categories: state.categoriesListReducer
     }
 }
 
-export default connect(mapStateToProps)(CategoryList);
+function mapDispatchToProps(dispatch) {
+    return {
+        actions: {
+            getCategories: bindActionCreators(categoryActions.getCategories, dispatch)
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CategoryList);
